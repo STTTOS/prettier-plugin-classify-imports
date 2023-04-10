@@ -1,7 +1,7 @@
 import { addComments, removeComments } from '@babel/types';
 import { clone, isEqual } from 'lodash';
 
-import { THIRD_PARTY_MODULES_SPECIAL_WORD, newLineNode } from '../constants';
+import { THIRD_PARTY_MODULES_SPECIAL_WORD, newLineNode, TYPES_DECLARATION_SPECIAL_WORD } from '../constants';
 import { naturalSort } from '../natural-sort';
 import { GetSortedNodes, ImportGroups, ImportOrLine } from '../types';
 import { getImportNodesMatchedGroup } from './get-import-nodes-matched-group';
@@ -17,19 +17,21 @@ import { getSortedNodesGroup } from './get-sorted-nodes-group';
 export const getSortedNodes: GetSortedNodes = (nodes, options) => {
     naturalSort.insensitive = options.importOrderCaseInsensitive;
 
-    let { importOrder } = options;
     const {
+        importOrder,
         importOrderSeparation,
         importOrderSortSpecifiers,
         importOrderGroupNamespaceSpecifiers,
     } = options;
+    if (!importOrder.includes(THIRD_PARTY_MODULES_SPECIAL_WORD)) {
+        importOrder.unshift(THIRD_PARTY_MODULES_SPECIAL_WORD)
+    }
+    if (!importOrder.includes(TYPES_DECLARATION_SPECIAL_WORD)) {
+        importOrder.unshift(TYPES_DECLARATION_SPECIAL_WORD)
+    }
 
     const originalNodes = nodes.map(clone);
     const finalNodes: ImportOrLine[] = [];
-
-    if (!importOrder.includes(THIRD_PARTY_MODULES_SPECIAL_WORD)) {
-        importOrder = [THIRD_PARTY_MODULES_SPECIAL_WORD, ...importOrder];
-    }
 
     const importOrderGroups = importOrder.reduce<ImportGroups>(
         (groups, regexp) => ({
@@ -39,15 +41,16 @@ export const getSortedNodes: GetSortedNodes = (nodes, options) => {
         {},
     );
 
-    const importOrderWithOutThirdPartyPlaceholder = importOrder.filter(
-        (group) => group !== THIRD_PARTY_MODULES_SPECIAL_WORD,
+    const importOrderWithOuttTypesDeclarations = importOrder.filter(
+        (group) => ![TYPES_DECLARATION_SPECIAL_WORD, THIRD_PARTY_MODULES_SPECIAL_WORD].includes(group),
     );
 
     for (const node of originalNodes) {
         const matchedGroup = getImportNodesMatchedGroup(
             node,
-            importOrderWithOutThirdPartyPlaceholder,
+            importOrderWithOuttTypesDeclarations,
         );
+        // 分类, 将对应的节点push到对应的规则组中
         importOrderGroups[matchedGroup].push(node);
     }
 
@@ -56,6 +59,7 @@ export const getSortedNodes: GetSortedNodes = (nodes, options) => {
 
         if (groupNodes.length === 0) continue;
 
+        // 对内部分组进行排序
         const sortedInsideGroup = getSortedNodesGroup(groupNodes, {
             importOrderGroupNamespaceSpecifiers,
         });

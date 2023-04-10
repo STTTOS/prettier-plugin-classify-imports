@@ -36,10 +36,10 @@ export function preprocessor(code: string, options: PrettierOptions) {
 
     const allImports = getSortedNodes(importNodes, {
         importOrder,
-        importOrderCaseInsensitive,
         importOrderSeparation,
-        importOrderGroupNamespaceSpecifiers,
         importOrderSortSpecifiers,
+        importOrderCaseInsensitive,
+        importOrderGroupNamespaceSpecifiers,
     });
 
     return getCodeFromAst(allImports, directives, code, interpreter);

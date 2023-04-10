@@ -4,7 +4,7 @@ import { PrettierOptions } from '../types';
 
 export const getSortedNodesGroup = (
     imports: ImportDeclaration[],
-    options: Pick<PrettierOptions, 'importOrderGroupNamespaceSpecifiers'>,
+    options: Pick<PrettierOptions, 'importOrderGroupNamespaceSpecifiers'>
 ) => {
     return imports.sort((a, b) => {
         if (options.importOrderGroupNamespaceSpecifiers) {
@@ -12,7 +12,10 @@ export const getSortedNodesGroup = (
             if (diff !== 0) return diff;
         }
 
-        return naturalSort(a.source.value, b.source.value);
+        const { start, end } = a
+        const { start: bStart = 0, end: bEnd = 0 } = b
+
+        return naturalSort(Number(end) - Number(start), Number(bEnd) - Number(bStart));
     });
 };
 
