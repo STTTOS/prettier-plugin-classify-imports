@@ -1,6 +1,6 @@
 import { ImportDeclaration } from '@babel/types';
 
-import { THIRD_PARTY_MODULES_SPECIAL_WORD } from '../constants';
+import { THIRD_PARTY_MODULES_SPECIAL_WORD, TYPES_DECLARATION_SPECIAL_WORD } from '../constants';
 
 /**
  * Get the regexp group to keep the import nodes.
@@ -11,6 +11,10 @@ export const getImportNodesMatchedGroup = (
     node: ImportDeclaration,
     importOrder: string[],
 ) => {
+    if (node.importKind === 'type') {
+        return TYPES_DECLARATION_SPECIAL_WORD
+    }
+
     const groupWithRegExp = importOrder.map((group) => ({
         group,
         regExp: new RegExp(group),

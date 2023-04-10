@@ -32,7 +32,7 @@ const options = {
     importOrderSeparation: {
         type: 'boolean',
         category: 'Global',
-        default: false,
+        default: true,
         description: 'Should imports be separated by new line?',
     },
     importOrderGroupNamespaceSpecifiers: {
@@ -45,12 +45,12 @@ const options = {
     importOrderSortSpecifiers: {
         type: 'boolean',
         category: 'Global',
-        default: false,
+        default: true,
         description: 'Should specifiers be sorted?',
     },
 };
 
-module.exports = {
+const a = {
     parsers: {
         babel: {
             ...babelParsers.babel,
@@ -71,3 +71,4 @@ module.exports = {
     },
     options,
 };
+module.exports = a

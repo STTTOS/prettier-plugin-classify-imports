@@ -13,7 +13,10 @@ export const getSortedImportSpecifiers = (node: ImportDeclaration) => {
             return a.type === 'ImportDefaultSpecifier' ? -1 : 1;
         }
 
-        return naturalSort(a.local.name, b.local.name);
+        const { start, end } = a
+        const { start: bStart = 0, end: bEnd = 0 } = b
+
+        return naturalSort(Number(end) - Number(start), Number(bEnd) - Number(bStart));
     });
     return node;
 };
