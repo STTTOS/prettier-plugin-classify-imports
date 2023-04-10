@@ -61,11 +61,7 @@ Add an order in prettier config file.
 
 ```ecmascript 6
 module.exports = {
-  "printWidth": 80,
-  "tabWidth": 4,
-  "trailingComma": "all",
-  "singleQuote": true,
-  "semi": true,
+  "plugins": ["prettier-plugin-classify-imports"]
   "importOrder": ["^[./]|(@\/)"]
 }
 ```
